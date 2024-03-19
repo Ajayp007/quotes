@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:quotes/colors/colors.dart';
 import '../../utils/global.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,86 +19,134 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Morning Quotes",
-          style: TextStyle(
-              color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Are You Sure To Exit ?"),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Yes"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text("No"),
-                    ),
-                  ],
-                ),
-              );
+    bool list = true;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        {
+          alert(context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Morning Quotes",
+            style: TextStyle(
+                color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          leading: InkWell(
+            onTap: () {
+              alert(context);
             },
-            icon: const Icon(Icons.arrow_back),
+            child: const Icon(Icons.arrow_back),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  list != list
+                      ? const Icon(Icons.list)
+                      : const Icon(Icons.grid_on);
+                });
+              },
+              icon: const Icon(Icons.list),
+            ),
+          ],
+        ),
+        body: list != list
+            ? GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemCount: g1.quotes.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: RandomColorModel().getColor(),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
+                      title: Column(
+                        children: [
+                          Text(
+                            "${g1.quotes[index].types}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "${g1.quotes[index].quotes}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "${g1.quotes[index].originator}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              )
+            : ListView.builder(
+                itemCount: g1.quotes.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: RandomColorModel().getColor(),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
+                      title: Column(
+                        children: [
+                          Text(
+                            "${g1.quotes[index].types}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "${g1.quotes[index].quotes}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Text(
+                              "- ${g1.quotes[index].originator}",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+      ),
+    );
+  }
+
+  void alert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Are You Sure To Exit ?"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              exit(0);
+            },
+            child: const Text("Yes"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("No"),
           ),
         ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: List.generate(
-            g1.my.length,
-            (index) => Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  width: MediaQuery.sizeOf(context).width,
-                  margin: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffc4879b),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            "~${g1.quotes[index].types} ~",
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Text(
-                          "${g1.quotes[index].quotes}",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "- ${g1.quotes[index].originator}",
-                          style: const TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
