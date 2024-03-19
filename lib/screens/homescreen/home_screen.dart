@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool list = true;
   @override
   void initState() {
     super.initState();
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool list = true;
+
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -45,16 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  list != list
-                      ? const Icon(Icons.list)
-                      : const Icon(Icons.grid_on);
+                  list = !list;
                 });
               },
-              icon: const Icon(Icons.list),
+              icon: Icon(list ?Icons.grid_on:Icons.list),
             ),
           ],
         ),
-        body: list != list
+        body: list
             ? GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
@@ -72,14 +71,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             "${g1.quotes[index].types}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             "${g1.quotes[index].quotes}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             "${g1.quotes[index].originator}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           )
                         ],
                       ),
